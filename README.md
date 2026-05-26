@@ -11,7 +11,7 @@
   <a href="#中文">简体中文</a> ·
   <a href="#english">English</a> ·
   <a href="docs/WORKFLOW_INSIGHTS.md"><b>📓 Workflow Insights</b></a> ·
-  <a href="LIVE_DEMO_URL_TBD"><b>🚀 Live Demo</b></a>
+  <a href="https://yflg2569096112-star.github.io/ielts-writing-teacher-lookup/"><b>🚀 Live Demo</b></a>
 </p>
 
 ![demo placeholder — 2 秒动画：搜索框输入 "第 01" → 即时跳出对应题](docs/demo.gif)
