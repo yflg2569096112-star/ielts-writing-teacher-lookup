@@ -1,0 +1,56 @@
+# Demo data file — shows the expected schema for the lookup builder.
+# Replace this with your own prep materials to generate a personalized portal.
+#
+# Two questions kept here as public samples (both are widely circulated
+# public-domain practice prompts). Production deployments load the
+# teacher's own private prep notes from a similar file.
+
+meta:
+  exam: IELTS Writing
+  generated_at: 2026-05-25
+  notes: |
+    A sample data file demonstrating the expected schema. The full
+    production deployment carries 24 chart-essay items + 29 essay items.
+
+categories:
+  chart:
+    label_cn: 图表作文
+    label_en: Chart essays
+    groups: [静态图, 动态图, 流程图, 地图题, 混合图]
+  essay:
+    label_cn: 大作文
+    label_en: Essays
+    groups: [教育家庭类, 社会城市类, 工作职业类, 科技文化类, 媒体广告类, 环境资源类]
+
+questions:
+  - id: t1
+    display_no: 1
+    kind: chart
+    group: 静态图
+    type: 双饼图
+    title:
+      en: Australian household energy and emissions
+      cn: 澳大利亚家庭能源使用与温室气体排放
+    prompt: |
+      The first chart below shows how energy is used in an average Australian
+      household. The second chart shows the greenhouse gas emissions which
+      result from this energy use.
+    explanation_anchor: ../task1-explanations/index.html#t1
+
+  - id: topic-01
+    display_no: 1
+    kind: essay
+    group: 教育家庭类
+    type: 双边利弊 / 优势劣势
+    title:
+      cn: Gap year · 高中后间隔年
+    prompt: |
+      In some countries young people are encouraged to work or travel for a
+      year between finishing high school and starting university studies.
+      Do you think the advantages outweigh the disadvantages?
+    explanation_anchor: ../task2-explanations/index.html#topic-01
+
+  # Additional items omitted from the public demo. In production, all 53
+  # items are listed here, each with its own prompt, type, and anchor.
+  # Schema is intentionally simple so it can be hand-edited or generated
+  # from spreadsheets / Markdown.

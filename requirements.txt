@@ -1,0 +1,7 @@
+# Core builder has zero external dependencies — standard library only
+# (pathlib, importlib, json, html, argparse, os).
+#
+# Optional extras for future extensions:
+#   pyyaml>=6.0          # if you wire up YAML config loading
+#   markdown>=3.5        # if you ingest Markdown-based prep notes
+#   python-docx>=1.0.0   # if you re-introduce the .docx data extraction

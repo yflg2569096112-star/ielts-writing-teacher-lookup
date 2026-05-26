@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Writing 教师讲解检索入口</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5d6978;
+      --line: #d9dee7;
+      --pale: #f5f7fb;
+      --blue: #2e74b5;
+      --blue-dark: #1f5f99;
+      --paper: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: #f2f4f8;
+      line-height: 1.55;
+    }
+    header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      padding: 28px 32px 22px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .searchbar {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+    input {
+      width: 100%;
+      border: 1px solid #b8c4d4;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 16px;
+      outline: none;
+      background: #fff;
+    }
+    input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(46,116,181,.14); }
+    button, .toggle {
+      border: 1px solid #b8c4d4;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.active, .toggle.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .quick-tags button {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--blue-dark);
+      background: #f7fbff;
+      border-color: #c7d7ea;
+    }
+    main { padding: 24px 32px 48px; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .links a {
+      color: var(--blue-dark);
+      border: 1px solid #c8d5e6;
+      background: #f9fbfe;
+      padding: 6px 9px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .links span { color: var(--muted); margin-left: 3px; }
+    .live-panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 18px 0;
+      overflow: hidden;
+    }
+    .live-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    .live-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .live-head span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+    .result-card {
+      border: 1px solid #d4dcea;
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+    .result-card:hover { border-color: #9ab5d6; }
+    .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid #d4dcea;
+      background: #f7f9fc;
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .result-title {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .result-prompt {
+      margin: 0 0 12px;
+      color: #334155;
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .empty-state {
+      padding: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 18px 0;
+      overflow: hidden;
+    }
+    section h2 {
+      margin: 0;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      font-size: 22px;
+      background: #fbfcfe;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 13px 12px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      color: #334155;
+      background: var(--pale);
+      font-weight: 700;
+    }
+    th:nth-child(1), td:nth-child(1) { width: 23%; }
+    th:nth-child(2), td:nth-child(2) { width: 20%; }
+    th:nth-child(3), td:nth-child(3) { width: 14%; }
+    th:nth-child(4), td:nth-child(4) { width: 32%; }
+    th:nth-child(5), td:nth-child(5) { width: 11%; }
+    small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 12px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 7px;
+      background: var(--blue);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--blue-dark); }
+    .hidden { display: none; }
+    .count { color: var(--muted); font-weight: 400; font-size: 14px; margin-left: 8px; }
+    @media (max-width: 900px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .searchbar { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; }
+      table, thead, tbody, tr, th, td { display: block; width: 100% !important; }
+      thead { display: none; }
+      tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+      td { border-bottom: 0; padding: 8px 12px; }
+      td::before { content: attr(data-label); display: block; color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>IELTS Writing 教师讲解检索入口</h1>
+    <p class="sub">按学生练习题册的位置检索，一键跳到对应老师讲解 HTML。小作文已处理“学生版分类排序”和“旧讲解页原始编号”的转换。</p>
+    <div class="searchbar">
+      <input id="search" placeholder="输入学生版题号、分类、标题或题干关键词，例如：静态图 第 01、Gap year、water heating、social networking">
+      <button class="toggle active" data-filter="all">全部</button>
+      <button class="toggle" data-filter="chart">图表作文</button>
+      <button class="toggle" data-filter="essay">大作文</button>
+    </div>
+    <div class="quick-tags">
+      <button data-query="静态图 第 01">静态图 第 01</button>
+      <button data-query="Gap year">Gap year</button>
+      <button data-query="water heating">water heating</button>
+      <button data-query="social networking">social networking</button>
+      <button data-query="地图题">地图题</button>
+      <button data-query="儿童广告">儿童广告</button>
+    </div>
+  </header>
+  <main>
+    <div class="summary">
+      <div class="card">
+        <h2>图表作文练习：24 题</h2>
+        <div class="links"><a href="#chart-all" data-kind="chart" data-query="图表作文练习 > 静态图">静态图 <span>7</span></a><a href="#chart-all" data-kind="chart" data-query="图表作文练习 > 动态图">动态图 <span>9</span></a><a href="#chart-all" data-kind="chart" data-query="图表作文练习 > 流程图">流程图 <span>6</span></a><a href="#chart-all" data-kind="chart" data-query="图表作文练习 > 地图题">地图题 <span>1</span></a><a href="#chart-all" data-kind="chart" data-query="图表作文练习 > 混合图">混合图 <span>1</span></a></div>
+      </div>
+      <div class="card">
+        <h2>大作文练习：29 题</h2>
+        <div class="links"><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 教育家庭类">教育家庭类 <span>9</span></a><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 社会城市类">社会城市类 <span>3</span></a><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 工作职业类">工作职业类 <span>3</span></a><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 科技文化类">科技文化类 <span>3</span></a><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 媒体广告类">媒体广告类 <span>7</span></a><a href="#essay-all" data-kind="essay" data-query="大作文练习 > 环境资源类">环境资源类 <span>4</span></a></div>
+      </div>
+    </div>
+
+    <div class="live-panel" id="live-panel">
+      <div class="live-head">
+        <h2>即时搜索结果</h2>
+        <span id="live-count">输入关键词后显示匹配题目</span>
+      </div>
+      <div id="live-results" class="result-grid">
+        <div class="empty-state">可以搜索题号、分类、标题、题干关键词或题型。例：`静态图 第 01`、`Gap year`、`water heating`、`social networking`。</div>
+      </div>
+    </div>
+
+    <section id="chart-all">
+      <h2>图表作文对应表 <span class="count" id="chart-count"></span></h2>
+      <table>
+        <thead><tr><th>学生版位置</th><th>标题</th><th>图表类型</th><th>题目</th><th>讲解页</th></tr></thead>
+        <tbody>
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 01 题 Australian household energy / emissions 澳大利亚家庭能源使用与温室气体排放 双饼图 The first chart below shows how energy is used in an average Australian household. The second chart shows the greenhouse gas emissions which result from this energy use. Category Energy use Emissions Heating 42% 15% Water heating 30% 32% Other appliances 15% 28% Refrigeration 7% 14% Lighting 4% 8% Cooling 2% 3%" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 01 题" data-title="Australian household energy / emissions" data-type="双饼图" data-prompt="The first chart below shows how energy is used in an average Australian household. The second chart shows the greenhouse gas emissions which result from this energy use." data-anchor="#t1" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t1">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 01 题</strong><small>原讲解锚点：#t1</small></td>
+              <td>Australian household energy / emissions<small>澳大利亚家庭能源使用与温室气体排放</small></td>
+              <td>双饼图</td>
+              <td>The first chart below shows how energy is used in an average Australian household. The second chart shows the greenhouse gas emissions which result from this energy use.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t1">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 02 题 Consumer spending table 五国消费支出表格 表格 The table below gives information on consumer spending on different items in five different countries in 2002. Country Food/Drinks/Tobacco Clothing/Footwear Leisure/Education Ireland 28.91% 6.43% 2.21% Italy 16.36% 9.00% 3.20% Spain 18.80% 6.51% 1.98% Sweden 15.77% 5.40% 3.22% Turkey 32.14% 6.63% 4.35%" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 02 题" data-title="Consumer spending table" data-type="表格" data-prompt="The table below gives information on consumer spending on different items in five different countries in 2002." data-anchor="#t2" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t2">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 02 题</strong><small>原讲解锚点：#t2</small></td>
+              <td>Consumer spending table<small>五国消费支出表格</small></td>
+              <td>表格</td>
+              <td>The table below gives information on consumer spending on different items in five different countries in 2002.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t2">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 03 题 UK graduates / postgraduates 2008 英国本科毕业生与研究生离校后去向 双柱图 The charts below show what UK graduate and postgraduate students who did not go into full-time work did after leaving college in 2008. Destination Graduates Postgraduates Part-time work 17,735 2,535 Voluntary work 3,500 345 Further study 29,665 2,725 Unemployment 16,235 1,625" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 03 题" data-title="UK graduates / postgraduates 2008" data-type="双柱图" data-prompt="The charts below show what UK graduate and postgraduate students who did not go into full-time work did after leaving college in 2008." data-anchor="#t3" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t3">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 03 题</strong><small>原讲解锚点：#t3</small></td>
+              <td>UK graduates / postgraduates 2008<small>英国本科毕业生与研究生离校后去向</small></td>
+              <td>双柱图</td>
+              <td>The charts below show what UK graduate and postgraduate students who did not go into full-time work did after leaving college in 2008.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t3">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 04 题 Dangerous waste products 三个国家危险废弃物处理方式 三饼图 The pie charts below show how dangerous waste products are dealt with in three countries. Method Republic of Korea Sweden UK Recycling 69% 25% 0% Underground 22% 55% 82% Incineration 9% 20% 2% Chemical treatment 0% 0% 8% Dumping at sea 0% 0% 8%" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 04 题" data-title="Dangerous waste products" data-type="三饼图" data-prompt="The pie charts below show how dangerous waste products are dealt with in three countries." data-anchor="#t4" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t4">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 04 题</strong><small>原讲解锚点：#t4</small></td>
+              <td>Dangerous waste products<small>三个国家危险废弃物处理方式</small></td>
+              <td>三饼图</td>
+              <td>The pie charts below show how dangerous waste products are dealt with in three countries.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t4">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 05 题 Families living in poverty in Australia 澳大利亚不同家庭贫困比例 表格 The table below shows the proportion of different categories of families living in poverty in Australia in 1999. Household type People in poverty Proportion Single aged person 54,000 6% Aged couple 48,000 4% Single, no children 359,000 19% Couple, no children 211,000 7% Sole parent 232,000 21% Couple with children 933,000 12% All households 1,837,000 11%" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 05 题" data-title="Families living in poverty in Australia" data-type="表格" data-prompt="The table below shows the proportion of different categories of families living in poverty in Australia in 1999." data-anchor="#t16" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t16">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 05 题</strong><small>原讲解锚点：#t16</small></td>
+              <td>Families living in poverty in Australia<small>澳大利亚不同家庭贫困比例</small></td>
+              <td>表格</td>
+              <td>The table below shows the proportion of different categories of families living in poverty in Australia in 1999.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t16">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 06 题 UK daily activities table 英国男女日常活动时间 表格 The table below shows average hours and minutes spent by UK males and females on different daily activities. Activity Males Females Sleep 8.04 8.18 All leisure 5.25 4.53 Employment and study 3.45 2.26 Housework 1.41 3.00 Childcare 0.15 0.32 Travel 1.32 1.12" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 06 题" data-title="UK daily activities table" data-type="表格" data-prompt="The table below shows average hours and minutes spent by UK males and females on different daily activities." data-anchor="#t18" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t18">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 06 题</strong><small>原讲解锚点：#t18</small></td>
+              <td>UK daily activities table<small>英国男女日常活动时间</small></td>
+              <td>表格</td>
+              <td>The table below shows average hours and minutes spent by UK males and females on different daily activities.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t18">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 静态图 &gt; 第 07 题 Underground railway systems 六城地下铁路系统 表格 The table below gives information about the underground railway systems in six cities. City Date opened Km of route Passengers/year London 1863 394 775m Paris 1900 199 1191m Tokyo 1927 155 1927m Washington DC 1976 126 144m Kyoto 1981 11 45m Los Angeles 2001 28 50m" data-kind="chart" data-position="图表作文练习 &gt; 静态图 &gt; 第 07 题" data-title="Underground railway systems" data-type="表格" data-prompt="The table below gives information about the underground railway systems in six cities." data-anchor="#t19" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t19">
+              <td><strong>图表作文练习 &gt; 静态图 &gt; 第 07 题</strong><small>原讲解锚点：#t19</small></td>
+              <td>Underground railway systems<small>六城地下铁路系统</small></td>
+              <td>表格</td>
+              <td>The table below gives information about the underground railway systems in six cities.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t19">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 08 题 Population aged 65 and over 三国 65 岁及以上人口比例 线图 The graph below shows the proportion of the population aged 65 and over between 1940 and 2040 in three different countries. Country 1940 2000 2040 USA about 9% about 14% about 23% Sweden about 7% about 20% about 25% Japan about 5% about 5% about 27%" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 08 题" data-title="Population aged 65 and over" data-type="线图" data-prompt="The graph below shows the proportion of the population aged 65 and over between 1940 and 2040 in three different countries." data-anchor="#t5" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t5">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 08 题</strong><small>原讲解锚点：#t5</small></td>
+              <td>Population aged 65 and over<small>三国 65 岁及以上人口比例</small></td>
+              <td>线图</td>
+              <td>The graph below shows the proportion of the population aged 65 and over between 1940 and 2040 in three different countries.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t5">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 09 题 Average CO2 emissions per person 四国人均二氧化碳排放 线图 The graph below shows average carbon dioxide (CO2) emissions per person in the United Kingdom, Sweden, Italy and Portugal between 1967 and 2007. Country 1967 2007 Trend UK about 11 tonnes about 9 tonnes fell Sweden about 9 tonnes about 5.5 tonnes rose then fell Italy about 4 tonnes about 7.5 tonnes rose Portugal about 1 tonne about 5.5 tonnes rose" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 09 题" data-title="Average CO2 emissions per person" data-type="线图" data-prompt="The graph below shows average carbon dioxide (CO2) emissions per person in the United Kingdom, Sweden, Italy and Portugal between 1967 and 2007." data-anchor="#t6" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t6">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 09 题</strong><small>原讲解锚点：#t6</small></td>
+              <td>Average CO2 emissions per person<small>四国人均二氧化碳排放</small></td>
+              <td>线图</td>
+              <td>The graph below shows average carbon dioxide (CO2) emissions per person in the United Kingdom, Sweden, Italy and Portugal between 1967 and 2007.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t6">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 10 题 Goods transported in the UK 英国四种运输方式货运量 线图 The graph below shows the quantities of goods transported in the UK between 1974 and 2002 by four different modes of transport. Mode 1974 2002 Main pattern Road about 70 about 98 highest and rising Water about 40 about 65 rising Rail about 40 about 41 fluctuated Pipeline about 5 about 22 lowest but rising" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 10 题" data-title="Goods transported in the UK" data-type="线图" data-prompt="The graph below shows the quantities of goods transported in the UK between 1974 and 2002 by four different modes of transport." data-anchor="#t7" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t7">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 10 题</strong><small>原讲解锚点：#t7</small></td>
+              <td>Goods transported in the UK<small>英国四种运输方式货运量</small></td>
+              <td>线图</td>
+              <td>The graph below shows the quantities of goods transported in the UK between 1974 and 2002 by four different modes of transport.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t7">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 11 题 UK telephone calls 英国三类电话通话分钟数 柱图 The chart below shows the total number of minutes (in billions) of telephone calls in the UK, divided into three categories, from 1995-2002. Category 1995 1999 2002 Local fixed line about 72 about 90 about 72 National/international fixed line about 38 about 50 about 61 Mobiles about 3 about 12 about 45" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 11 题" data-title="UK telephone calls" data-type="柱图" data-prompt="The chart below shows the total number of minutes (in billions) of telephone calls in the UK, divided into three categories, from 1995-2002." data-anchor="#t9" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t9">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 11 题</strong><small>原讲解锚点：#t9</small></td>
+              <td>UK telephone calls<small>英国三类电话通话分钟数</small></td>
+              <td>柱图</td>
+              <td>The chart below shows the total number of minutes (in billions) of telephone calls in the UK, divided into three categories, from 1995-2002.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t9">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 12 题 UK school annual spending 英国学校年度支出变化 三饼图 The three pie charts below show the changes in annual spending by a particular UK school in 1981, 1991 and 2001. Category 1981 1991 2001 Teachers&#x27; salaries 40% 50% about 45% Other workers&#x27; salaries 28% 22% 15% Resources 15% 20% 9% Furniture/equipment 15% 5% about 23% Insurance 2% 3% 8%" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 12 题" data-title="UK school annual spending" data-type="三饼图" data-prompt="The three pie charts below show the changes in annual spending by a particular UK school in 1981, 1991 and 2001." data-anchor="#t10" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t10">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 12 题</strong><small>原讲解锚点：#t10</small></td>
+              <td>UK school annual spending<small>英国学校年度支出变化</small></td>
+              <td>三饼图</td>
+              <td>The three pie charts below show the changes in annual spending by a particular UK school in 1981, 1991 and 2001.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t10">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 13 题 Waste produced in six countries 六个国家废弃物产量 表格 The table below shows the amount of waste produced (in millions of tonnes) in six different countries over a twenty-year period. Country 1980 1990 2000 Ireland 0.6 N/A 5 Japan 28 32 53 Korea N/A 31 19 Poland 4 5 6.6 Portugal 2 3 5 US 131 151 192" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 13 题" data-title="Waste produced in six countries" data-type="表格" data-prompt="The table below shows the amount of waste produced (in millions of tonnes) in six different countries over a twenty-year period." data-anchor="#t11" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t11">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 13 题</strong><small>原讲解锚点：#t11</small></td>
+              <td>Waste produced in six countries<small>六个国家废弃物产量</small></td>
+              <td>表格</td>
+              <td>The table below shows the amount of waste produced (in millions of tonnes) in six different countries over a twenty-year period.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t11">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 14 题 Cinemas in a European country 欧洲某国不同地区电影院数量 表格 The table below shows the change in the number of cinemas in different regions in a European country between 2004 and 2009. Region 2004 2009 Change rate City Center 1512 1620 3.10% Near City Center 300 400 1.60% Suburb 40 30 -25% Countryside 108 90 -6% Total 2100 2287 2%" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 14 题" data-title="Cinemas in a European country" data-type="表格" data-prompt="The table below shows the change in the number of cinemas in different regions in a European country between 2004 and 2009." data-anchor="#t17" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t17">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 14 题</strong><small>原讲解锚点：#t17</small></td>
+              <td>Cinemas in a European country<small>欧洲某国不同地区电影院数量</small></td>
+              <td>表格</td>
+              <td>The table below shows the change in the number of cinemas in different regions in a European country between 2004 and 2009.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t17">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 15 题 Renewable energy in four countries 四国可再生能源比例 柱图 The chart below shows the percentage of renewable energy in four countries between 1997 and 2010. Country 1997 2007 2010 France 70% about 50% about 40% Iceland about 65% about 70% 75% Australia low figure rising about 22% UK lower than Iceland/France 60% about 55%" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 15 题" data-title="Renewable energy in four countries" data-type="柱图" data-prompt="The chart below shows the percentage of renewable energy in four countries between 1997 and 2010." data-anchor="#t20" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t20">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 15 题</strong><small>原讲解锚点：#t20</small></td>
+              <td>Renewable energy in four countries<small>四国可再生能源比例</small></td>
+              <td>柱图</td>
+              <td>The chart below shows the percentage of renewable energy in four countries between 1997 and 2010.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t20">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 动态图 &gt; 第 16 题 UK commuters by car, bus or train 英国通勤者交通方式 线图 The graph below shows the average number of UK commuters travelling each day by car, bus or train between 1970 and 2030. Mode 1970 2000 2030 Car about 5m about 7m about 9m Bus about 4m about 3m about 3m Train about 2m about 3m about 5m" data-kind="chart" data-position="图表作文练习 &gt; 动态图 &gt; 第 16 题" data-title="UK commuters by car, bus or train" data-type="线图" data-prompt="The graph below shows the average number of UK commuters travelling each day by car, bus or train between 1970 and 2030." data-anchor="#t24" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t24">
+              <td><strong>图表作文练习 &gt; 动态图 &gt; 第 16 题</strong><small>原讲解锚点：#t24</small></td>
+              <td>UK commuters by car, bus or train<small>英国通勤者交通方式</small></td>
+              <td>线图</td>
+              <td>The graph below shows the average number of UK commuters travelling each day by car, bus or train between 1970 and 2030.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t24">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 17 题 Production of silk cloth 丝绸布料生产流程 流程图 The diagram below shows the stages in the production of silk cloth. Select cocoons Boil in water Unwind 300-900m thread Twist threads Weave cloth Dye and pack" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 17 题" data-title="Production of silk cloth" data-type="流程图" data-prompt="The diagram below shows the stages in the production of silk cloth." data-anchor="#t12" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t12">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 17 题</strong><small>原讲解锚点：#t12</small></td>
+              <td>Production of silk cloth<small>丝绸布料生产流程</small></td>
+              <td>流程图</td>
+              <td>The diagram below shows the stages in the production of silk cloth.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t12">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 18 题 Glass bottle recycling 玻璃瓶回收并制成新瓶 流程图 The diagram below shows how used bottles are recycled and made into new ones. Used bottles collected Sorted by colour Transported to factory Washed with high-pressure water Melted in furnace Mixed with new liquid glass Moulded into new bottles Sent to supermarkets" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 18 题" data-title="Glass bottle recycling" data-type="流程图" data-prompt="The diagram below shows how used bottles are recycled and made into new ones." data-anchor="#t13" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t13">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 18 题</strong><small>原讲解锚点：#t13</small></td>
+              <td>Glass bottle recycling<small>玻璃瓶回收并制成新瓶</small></td>
+              <td>流程图</td>
+              <td>The diagram below shows how used bottles are recycled and made into new ones.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t13">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 19 题 Salmon life cycle 鲑鱼生命周期 周期流程图 The diagram below shows the life cycle of a species of large fish called the salmon. Eggs in upper river Fry in reeds Smolt in lower river Adult salmon in open sea Adults return upstream to spawn" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 19 题" data-title="Salmon life cycle" data-type="周期流程图" data-prompt="The diagram below shows the life cycle of a species of large fish called the salmon." data-anchor="#t14" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t14">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 19 题</strong><small>原讲解锚点：#t14</small></td>
+              <td>Salmon life cycle<small>鲑鱼生命周期</small></td>
+              <td>周期流程图</td>
+              <td>The diagram below shows the life cycle of a species of large fish called the salmon.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t14">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 20 题 Silkworm life cycle + silk cloth production 蚕生命周期与丝绸布料生产双图 双流程图 The diagrams below show the life cycle of the silkworm and the stages in the production of silk cloth. Eggs Larva feeds on mulberry leaves Cocoon is produced Moth emerges Cocoons selected Boiled, unwound, twisted, woven and dyed" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 20 题" data-title="Silkworm life cycle + silk cloth production" data-type="双流程图" data-prompt="The diagrams below show the life cycle of the silkworm and the stages in the production of silk cloth." data-anchor="#t21" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t21">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 20 题</strong><small>原讲解锚点：#t21</small></td>
+              <td>Silkworm life cycle + silk cloth production<small>蚕生命周期与丝绸布料生产双图</small></td>
+              <td>双流程图</td>
+              <td>The diagrams below show the life cycle of the silkworm and the stages in the production of silk cloth.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t21">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 21 题 Cement / concrete process 水泥制造与混凝土生产 双流程图 The diagrams below show the stages and equipment used in the cement-making process, and how cement is used to produce concrete for building purposes. Concrete ingredient Proportion Gravel 50% Sand 25% Cement 15% Water 10% Limestone and clay crushed Powder mixed Heated in rotating heater Ground into cement Cement packed in bags Cement, water, sand and gravel mixed into concrete" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 21 题" data-title="Cement / concrete process" data-type="双流程图" data-prompt="The diagrams below show the stages and equipment used in the cement-making process, and how cement is used to produce concrete for building purposes." data-anchor="#t22" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t22">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 21 题</strong><small>原讲解锚点：#t22</small></td>
+              <td>Cement / concrete process<small>水泥制造与混凝土生产</small></td>
+              <td>双流程图</td>
+              <td>The diagrams below show the stages and equipment used in the cement-making process, and how cement is used to produce concrete for building purposes.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t22">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 流程图 &gt; 第 22 题 Silkworm life cycle 蚕的生命周期 周期流程图 The diagram below shows the life cycle of the silkworm. Eggs 3-6 days Larva feeds on mulberry leaves for 4-6 weeks Cocoon 16 days Moth Eggs again" data-kind="chart" data-position="图表作文练习 &gt; 流程图 &gt; 第 22 题" data-title="Silkworm life cycle" data-type="周期流程图" data-prompt="The diagram below shows the life cycle of the silkworm." data-anchor="#t23" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t23">
+              <td><strong>图表作文练习 &gt; 流程图 &gt; 第 22 题</strong><small>原讲解锚点：#t23</small></td>
+              <td>Silkworm life cycle<small>蚕的生命周期</small></td>
+              <td>周期流程图</td>
+              <td>The diagram below shows the life cycle of the silkworm.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t23">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 地图题 &gt; 第 23 题 Island before and after tourist facilities 旅游设施建设前后岛屿地图 地图 The two maps below show an island before and after the construction of some tourist facilities. Before: beach, sea and trees After: accommodation in west and centre Restaurant in north and reception in centre Pier added in south Footpaths and vehicle tracks added Beach used for swimming" data-kind="chart" data-position="图表作文练习 &gt; 地图题 &gt; 第 23 题" data-title="Island before and after tourist facilities" data-type="地图" data-prompt="The two maps below show an island before and after the construction of some tourist facilities." data-anchor="#t15" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t15">
+              <td><strong>图表作文练习 &gt; 地图题 &gt; 第 23 题</strong><small>原讲解锚点：#t15</small></td>
+              <td>Island before and after tourist facilities<small>旅游设施建设前后岛屿地图</small></td>
+              <td>地图</td>
+              <td>The two maps below show an island before and after the construction of some tourist facilities.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t15">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="图表作文练习 &gt; 混合图 &gt; 第 24 题 USA marriage/divorce + marital status 美国结婚离婚数量与成年人婚姻状态 混合图 The charts below give information about USA marriage and divorce rates between 1970 and 2000, and the marital status of adult Americans in two of the years. Item 1970 1980 1990 2000 Marriages about 2.5m about 2.5m about 2.3m about 2.0m Divorces about 1.0m about 1.4m about 1.1m about 1.0m" data-kind="chart" data-position="图表作文练习 &gt; 混合图 &gt; 第 24 题" data-title="USA marriage/divorce + marital status" data-type="混合图" data-prompt="The charts below give information about USA marriage and divorce rates between 1970 and 2000, and the marital status of adult Americans in two of the years." data-anchor="#t8" data-href="../../manual-20260523/task1-all-lessons-full-html/index.html#t8">
+              <td><strong>图表作文练习 &gt; 混合图 &gt; 第 24 题</strong><small>原讲解锚点：#t8</small></td>
+              <td>USA marriage/divorce + marital status<small>美国结婚离婚数量与成年人婚姻状态</small></td>
+              <td>混合图</td>
+              <td>The charts below give information about USA marriage and divorce rates between 1970 and 2000, and the marital status of adult Americans in two of the years.</td>
+              <td><a class="btn" href="../../manual-20260523/task1-all-lessons-full-html/index.html#t8">打开讲解</a></td>
+            </tr>
+            </tbody>
+      </table>
+    </section>
+
+    <section id="essay-all">
+      <h2>大作文对应表 <span class="count" id="essay-count"></span></h2>
+      <table>
+        <thead><tr><th>学生版位置</th><th>标题</th><th>题型</th><th>题目</th><th>讲解页</th></tr></thead>
+        <tbody>
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 01 题 Gap year / 高中后间隔年 双边利弊 / 优势劣势 AOD / outweigh In some countries young people are encouraged to work or travel for a year between finishing high school and starting university studies. Do you think the advantages outweigh the disadvantages?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 01 题" data-title="Gap year / 高中后间隔年" data-type="双边利弊 / 优势劣势" data-prompt="In some countries young people are encouraged to work or travel for a year between finishing high school and starting university studies. Do you think the advantages outweigh the disadvantages?" data-anchor="#topic-01" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-01">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 01 题</strong><small>原讲解锚点：#topic-01</small></td>
+              <td>Gap year / 高中后间隔年</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>In some countries young people are encouraged to work or travel for a year between finishing high school and starting university studies. Do you think the advantages outweigh the disadvantages?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-01">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 02 题 父母与孩子年龄差变大 双边利弊 / 优势劣势 AOD / outweigh In some countries, the difference in age between parents and children is generally greater than it was in the past. Do you think the advantages outweigh the disadvantages?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 02 题" data-title="父母与孩子年龄差变大" data-type="双边利弊 / 优势劣势" data-prompt="In some countries, the difference in age between parents and children is generally greater than it was in the past. Do you think the advantages outweigh the disadvantages?" data-anchor="#topic-02" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-02">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 02 题</strong><small>原讲解锚点：#topic-02</small></td>
+              <td>父母与孩子年龄差变大</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>In some countries, the difference in age between parents and children is generally greater than it was in the past. Do you think the advantages outweigh the disadvantages?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-02">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 03 题 小学开始学外语 双边利弊 / 优势劣势 AOD / outweigh Some experts believe that it is better for children to begin learning a foreign language at primary school rather than secondary school. Do the advantages of this outweigh the disadvantages?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 03 题" data-title="小学开始学外语" data-type="双边利弊 / 优势劣势" data-prompt="Some experts believe that it is better for children to begin learning a foreign language at primary school rather than secondary school. Do the advantages of this outweigh the disadvantages?" data-anchor="#topic-03" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-03">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 03 题</strong><small>原讲解锚点：#topic-03</small></td>
+              <td>小学开始学外语</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>Some experts believe that it is better for children to begin learning a foreign language at primary school rather than secondary school. Do the advantages of this outweigh the disadvantages?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-03">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 04 题 政府支付儿童教育费用 双边利弊 / 优势劣势 AOD / outweigh Children&#x27;s education is expensive. In some countries, the government pays some or all of the costs. Do the advantages outweigh its disadvantages?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 04 题" data-title="政府支付儿童教育费用" data-type="双边利弊 / 优势劣势" data-prompt="Children&#x27;s education is expensive. In some countries, the government pays some or all of the costs. Do the advantages outweigh its disadvantages?" data-anchor="#topic-04" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-04">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 04 题</strong><small>原讲解锚点：#topic-04</small></td>
+              <td>政府支付儿童教育费用</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>Children&#x27;s education is expensive. In some countries, the government pays some or all of the costs. Do the advantages outweigh its disadvantages?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-04">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 社会城市类 &gt; 第 05 题 大城市生活与健康 单边讨论 / 立场表态 Agree / Disagree Some people think living in big cities is bad for people&#x27;s health. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 社会城市类 &gt; 第 05 题" data-title="大城市生活与健康" data-type="单边讨论 / 立场表态" data-prompt="Some people think living in big cities is bad for people&#x27;s health. To what extent do you agree or disagree?" data-anchor="#topic-05" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-05">
+              <td><strong>大作文练习 &gt; 社会城市类 &gt; 第 05 题</strong><small>原讲解锚点：#topic-05</small></td>
+              <td>大城市生活与健康</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Some people think living in big cities is bad for people&#x27;s health. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-05">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 工作职业类 &gt; 第 06 题 早定职业方向 vs 经常换工作 单边讨论 / 立场表态 Agree / Disagree People who decide on a career path early in their lives and keep to it are more likely to have a satisfying working life than those who change jobs frequently. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 工作职业类 &gt; 第 06 题" data-title="早定职业方向 vs 经常换工作" data-type="单边讨论 / 立场表态" data-prompt="People who decide on a career path early in their lives and keep to it are more likely to have a satisfying working life than those who change jobs frequently. To what extent do you agree or disagree?" data-anchor="#topic-06" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-06">
+              <td><strong>大作文练习 &gt; 工作职业类 &gt; 第 06 题</strong><small>原讲解锚点：#topic-06</small></td>
+              <td>早定职业方向 vs 经常换工作</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>People who decide on a career path early in their lives and keep to it are more likely to have a satisfying working life than those who change jobs frequently. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-06">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 07 题 学校是否应教好行为 单边讨论 / 立场表态 Agree / Disagree Some people think schools should teach students to form good behaviors in addition to providing formal education. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 07 题" data-title="学校是否应教好行为" data-type="单边讨论 / 立场表态" data-prompt="Some people think schools should teach students to form good behaviors in addition to providing formal education. To what extent do you agree or disagree?" data-anchor="#topic-07" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-07">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 07 题</strong><small>原讲解锚点：#topic-07</small></td>
+              <td>学校是否应教好行为</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Some people think schools should teach students to form good behaviors in addition to providing formal education. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-07">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 科技文化类 &gt; 第 08 题 在外语国家生活的问题 单边讨论 / 立场表态 Agree / Disagree Living in a country where you have to speak a foreign language can cause serious social problems as well as practical problems. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 科技文化类 &gt; 第 08 题" data-title="在外语国家生活的问题" data-type="单边讨论 / 立场表态" data-prompt="Living in a country where you have to speak a foreign language can cause serious social problems as well as practical problems. To what extent do you agree or disagree?" data-anchor="#topic-08" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-08">
+              <td><strong>大作文练习 &gt; 科技文化类 &gt; 第 08 题</strong><small>原讲解锚点：#topic-08</small></td>
+              <td>在外语国家生活的问题</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Living in a country where you have to speak a foreign language can cause serious social problems as well as practical problems. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-08">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 09 题 发展中国家：科技 vs 免费教育 双边讨论 Discuss both views Some people think that governments in developing countries should introduce new technologies to people in order to improve the quality of life, while others believe that in order to achieve that governments should offer free education for all. Discuss both these views and give your own opinion." data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 09 题" data-title="发展中国家：科技 vs 免费教育" data-type="双边讨论" data-prompt="Some people think that governments in developing countries should introduce new technologies to people in order to improve the quality of life, while others believe that in order to achieve that governments should offer free education for all. Discuss both these views and give your own opinion." data-anchor="#topic-09" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-09">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 09 题</strong><small>原讲解锚点：#topic-09</small></td>
+              <td>发展中国家：科技 vs 免费教育</td>
+              <td>双边讨论</td>
+              <td>Some people think that governments in developing countries should introduce new technologies to people in order to improve the quality of life, while others believe that in order to achieve that governments should offer free education for all. Discuss both these views and give your own opinion.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-09">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 10 题 广告影响消费者与保护措施 问题原因解决 / 混合类 Two-part Consumers are faced with increasing numbers of advertisements from competing companies. To what extent do you think consumers are influenced by advertisements? What measures can be taken to protect them?" data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 10 题" data-title="广告影响消费者与保护措施" data-type="问题原因解决 / 混合类" data-prompt="Consumers are faced with increasing numbers of advertisements from competing companies. To what extent do you think consumers are influenced by advertisements? What measures can be taken to protect them?" data-anchor="#topic-10" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-10">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 10 题</strong><small>原讲解锚点：#topic-10</small></td>
+              <td>广告影响消费者与保护措施</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>Consumers are faced with increasing numbers of advertisements from competing companies. To what extent do you think consumers are influenced by advertisements? What measures can be taken to protect them?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-10">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 11 题 电视新闻展示灾难和暴力画面 问题原因解决 / 混合类 Causes + Solutions Today, it is common for TV news programmes to show the images of disasters and violence to the public. What has caused this problem? How do we solve this problem?" data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 11 题" data-title="电视新闻展示灾难和暴力画面" data-type="问题原因解决 / 混合类" data-prompt="Today, it is common for TV news programmes to show the images of disasters and violence to the public. What has caused this problem? How do we solve this problem?" data-anchor="#topic-11" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-11">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 11 题</strong><small>原讲解锚点：#topic-11</small></td>
+              <td>电视新闻展示灾难和暴力画面</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>Today, it is common for TV news programmes to show the images of disasters and violence to the public. What has caused this problem? How do we solve this problem?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-11">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 12 题 互联网是否能替代学校教育 单边讨论 / 立场表态 Agree / Disagree Schooling is no longer necessary, since more and more information is accessible on the Internet, and students can study just as well at home. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 12 题" data-title="互联网是否能替代学校教育" data-type="单边讨论 / 立场表态" data-prompt="Schooling is no longer necessary, since more and more information is accessible on the Internet, and students can study just as well at home. To what extent do you agree or disagree?" data-anchor="#topic-12" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-12">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 12 题</strong><small>原讲解锚点：#topic-12</small></td>
+              <td>互联网是否能替代学校教育</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Schooling is no longer necessary, since more and more information is accessible on the Internet, and students can study just as well at home. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-12">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 社会城市类 &gt; 第 13 题 慈善组织应帮助本国还是全球需要帮助的人 双边讨论 Discuss both views Some people think charity organizations should help people in great need wherever they live. However, others think they should help people in their own country. Discuss both views and give your own opinion." data-kind="essay" data-position="大作文练习 &gt; 社会城市类 &gt; 第 13 题" data-title="慈善组织应帮助本国还是全球需要帮助的人" data-type="双边讨论" data-prompt="Some people think charity organizations should help people in great need wherever they live. However, others think they should help people in their own country. Discuss both views and give your own opinion." data-anchor="#topic-13" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-13">
+              <td><strong>大作文练习 &gt; 社会城市类 &gt; 第 13 题</strong><small>原讲解锚点：#topic-13</small></td>
+              <td>慈善组织应帮助本国还是全球需要帮助的人</td>
+              <td>双边讨论</td>
+              <td>Some people think charity organizations should help people in great need wherever they live. However, others think they should help people in their own country. Discuss both views and give your own opinion.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-13">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 社会城市类 &gt; 第 14 题 私家车增长与公共交通 问题原因解决 / 混合类 Two-part / Problem-Solution An increasing number of cars are bought for private use every year, and this has caused many problems. What do you think these problems are? How can people be encouraged to use public transport?" data-kind="essay" data-position="大作文练习 &gt; 社会城市类 &gt; 第 14 题" data-title="私家车增长与公共交通" data-type="问题原因解决 / 混合类" data-prompt="An increasing number of cars are bought for private use every year, and this has caused many problems. What do you think these problems are? How can people be encouraged to use public transport?" data-anchor="#topic-14" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-14">
+              <td><strong>大作文练习 &gt; 社会城市类 &gt; 第 14 题</strong><small>原讲解锚点：#topic-14</small></td>
+              <td>私家车增长与公共交通</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>An increasing number of cars are bought for private use every year, and this has caused many problems. What do you think these problems are? How can people be encouraged to use public transport?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-14">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 环境资源类 &gt; 第 15 题 丢弃型社会 问题原因解决 / 混合类 Causes + Solutions It is argued that we are living in a throw-away society: people throw away what they use in daily life, instead of recycling or reusing them. Why has this happened and how to address this issue?" data-kind="essay" data-position="大作文练习 &gt; 环境资源类 &gt; 第 15 题" data-title="丢弃型社会" data-type="问题原因解决 / 混合类" data-prompt="It is argued that we are living in a throw-away society: people throw away what they use in daily life, instead of recycling or reusing them. Why has this happened and how to address this issue?" data-anchor="#topic-15" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-15">
+              <td><strong>大作文练习 &gt; 环境资源类 &gt; 第 15 题</strong><small>原讲解锚点：#topic-15</small></td>
+              <td>丢弃型社会</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>It is argued that we are living in a throw-away society: people throw away what they use in daily life, instead of recycling or reusing them. Why has this happened and how to address this issue?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-15">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 科技文化类 &gt; 第 16 题 国家差异减少 / 全球文化同质化 双边利弊 / 优势劣势 AOD / outweigh Differences between countries are becoming less evident recently. People can see the same films, brands, fashion, advertisements and TV channels. Do the advantages outweigh disadvantages?" data-kind="essay" data-position="大作文练习 &gt; 科技文化类 &gt; 第 16 题" data-title="国家差异减少 / 全球文化同质化" data-type="双边利弊 / 优势劣势" data-prompt="Differences between countries are becoming less evident recently. People can see the same films, brands, fashion, advertisements and TV channels. Do the advantages outweigh disadvantages?" data-anchor="#topic-16" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-16">
+              <td><strong>大作文练习 &gt; 科技文化类 &gt; 第 16 题</strong><small>原讲解锚点：#topic-16</small></td>
+              <td>国家差异减少 / 全球文化同质化</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>Differences between countries are becoming less evident recently. People can see the same films, brands, fashion, advertisements and TV channels. Do the advantages outweigh disadvantages?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-16">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 17 题 广告的经济作用 vs 社会负面影响 双边讨论 Discuss both views Some people believe that advertising may have positive economic effects. Others think it has negative social effects, because advertising makes individuals less satisfied with what they are and what they have. Discuss both these views and give your own opinion." data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 17 题" data-title="广告的经济作用 vs 社会负面影响" data-type="双边讨论" data-prompt="Some people believe that advertising may have positive economic effects. Others think it has negative social effects, because advertising makes individuals less satisfied with what they are and what they have. Discuss both these views and give your own opinion." data-anchor="#topic-17" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-17">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 17 题</strong><small>原讲解锚点：#topic-17</small></td>
+              <td>广告的经济作用 vs 社会负面影响</td>
+              <td>双边讨论</td>
+              <td>Some people believe that advertising may have positive economic effects. Others think it has negative social effects, because advertising makes individuals less satisfied with what they are and what they have. Discuss both these views and give your own opinion.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-17">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 环境资源类 &gt; 第 18 题 物种消失 vs 其他环境问题 双边讨论 Discuss both views Some people say that the main environmental problem of our time is the loss of particular species of plants and animals. Others say that there are more important environmental problems. Discuss both these views and give your own opinion." data-kind="essay" data-position="大作文练习 &gt; 环境资源类 &gt; 第 18 题" data-title="物种消失 vs 其他环境问题" data-type="双边讨论" data-prompt="Some people say that the main environmental problem of our time is the loss of particular species of plants and animals. Others say that there are more important environmental problems. Discuss both these views and give your own opinion." data-anchor="#topic-18" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-18">
+              <td><strong>大作文练习 &gt; 环境资源类 &gt; 第 18 题</strong><small>原讲解锚点：#topic-18</small></td>
+              <td>物种消失 vs 其他环境问题</td>
+              <td>双边讨论</td>
+              <td>Some people say that the main environmental problem of our time is the loss of particular species of plants and animals. Others say that there are more important environmental problems. Discuss both these views and give your own opinion.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-18">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 工作职业类 &gt; 第 19 题 努力工作的唯一原因是否是赚钱 单边讨论 / 立场表态 Agree / Disagree The only reason for people working hard is to earn money. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 工作职业类 &gt; 第 19 题" data-title="努力工作的唯一原因是否是赚钱" data-type="单边讨论 / 立场表态" data-prompt="The only reason for people working hard is to earn money. To what extent do you agree or disagree?" data-anchor="#topic-19" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-19">
+              <td><strong>大作文练习 &gt; 工作职业类 &gt; 第 19 题</strong><small>原讲解锚点：#topic-19</small></td>
+              <td>努力工作的唯一原因是否是赚钱</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>The only reason for people working hard is to earn money. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-19">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 工作职业类 &gt; 第 20 题 员工着装 vs 工作质量 单边讨论 / 立场表态 Agree / Disagree Some people believe that employers should not be concerned about the way their employees dress, but be concerned about the quality of work. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 工作职业类 &gt; 第 20 题" data-title="员工着装 vs 工作质量" data-type="单边讨论 / 立场表态" data-prompt="Some people believe that employers should not be concerned about the way their employees dress, but be concerned about the quality of work. To what extent do you agree or disagree?" data-anchor="#topic-20" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-20">
+              <td><strong>大作文练习 &gt; 工作职业类 &gt; 第 20 题</strong><small>原讲解锚点：#topic-20</small></td>
+              <td>员工着装 vs 工作质量</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Some people believe that employers should not be concerned about the way their employees dress, but be concerned about the quality of work. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-20">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 21 题 在家教育 vs 学校教育Unit25 单边讨论 / 立场表态 Positive / Negative In some countries, many people choose to educate their children at home by themselves, instead of sending them to school. Is this a positive or negative development?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 21 题" data-title="在家教育 vs 学校教育Unit25" data-type="单边讨论 / 立场表态" data-prompt="In some countries, many people choose to educate their children at home by themselves, instead of sending them to school. Is this a positive or negative development?" data-anchor="#topic-21" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-21">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 21 题</strong><small>原讲解锚点：#topic-21</small></td>
+              <td>在家教育 vs 学校教育Unit25</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>In some countries, many people choose to educate their children at home by themselves, instead of sending them to school. Is this a positive or negative development?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-21">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 教育家庭类 &gt; 第 22 题 努力就能成功的信息Unit26 双边利弊 / 优势劣势 Advantages / Disadvantages In some cultures, children are often told that they can achieve anything if they try hard enough. What are the advantages and disadvantages of giving children this message?" data-kind="essay" data-position="大作文练习 &gt; 教育家庭类 &gt; 第 22 题" data-title="努力就能成功的信息Unit26" data-type="双边利弊 / 优势劣势" data-prompt="In some cultures, children are often told that they can achieve anything if they try hard enough. What are the advantages and disadvantages of giving children this message?" data-anchor="#topic-22" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-22">
+              <td><strong>大作文练习 &gt; 教育家庭类 &gt; 第 22 题</strong><small>原讲解锚点：#topic-22</small></td>
+              <td>努力就能成功的信息Unit26</td>
+              <td>双边利弊 / 优势劣势</td>
+              <td>In some cultures, children are often told that they can achieve anything if they try hard enough. What are the advantages and disadvantages of giving children this message?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-22">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 科技文化类 &gt; 第 23 题 现代通信技术是否有益Unit27 单边讨论 / 立场表态 Agree / Disagree Some groups of people benefit much from modern communication technologies, but others think they are not beneficial. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 科技文化类 &gt; 第 23 题" data-title="现代通信技术是否有益Unit27" data-type="单边讨论 / 立场表态" data-prompt="Some groups of people benefit much from modern communication technologies, but others think they are not beneficial. To what extent do you agree or disagree?" data-anchor="#topic-23" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-23">
+              <td><strong>大作文练习 &gt; 科技文化类 &gt; 第 23 题</strong><small>原讲解锚点：#topic-23</small></td>
+              <td>现代通信技术是否有益Unit27</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Some groups of people benefit much from modern communication technologies, but others think they are not beneficial. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-23">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 环境资源类 &gt; 第 24 题 城市垃圾处理问题Unit28 问题原因解决 / 混合类 Problems + Suggestions Waste disposal presents increasing problems, especially in the urban areas of most big cities. What are these problems? Give some suggestions for the government and individuals on how to reduce the amount of rubbish." data-kind="essay" data-position="大作文练习 &gt; 环境资源类 &gt; 第 24 题" data-title="城市垃圾处理问题Unit28" data-type="问题原因解决 / 混合类" data-prompt="Waste disposal presents increasing problems, especially in the urban areas of most big cities. What are these problems? Give some suggestions for the government and individuals on how to reduce the amount of rubbish." data-anchor="#topic-24" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-24">
+              <td><strong>大作文练习 &gt; 环境资源类 &gt; 第 24 题</strong><small>原讲解锚点：#topic-24</small></td>
+              <td>城市垃圾处理问题Unit28</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>Waste disposal presents increasing problems, especially in the urban areas of most big cities. What are these problems? Give some suggestions for the government and individuals on how to reduce the amount of rubbish.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-24">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 环境资源类 &gt; 第 25 题 全球淡水短缺Unit29 问题原因解决 / 混合类 Reasons + Solutions Countries around the world have been experiencing various degrees of fresh water shortage. Give reasons for this problem and suggest what individuals and governments can do to solve it." data-kind="essay" data-position="大作文练习 &gt; 环境资源类 &gt; 第 25 题" data-title="全球淡水短缺Unit29" data-type="问题原因解决 / 混合类" data-prompt="Countries around the world have been experiencing various degrees of fresh water shortage. Give reasons for this problem and suggest what individuals and governments can do to solve it." data-anchor="#topic-25" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-25">
+              <td><strong>大作文练习 &gt; 环境资源类 &gt; 第 25 题</strong><small>原讲解锚点：#topic-25</small></td>
+              <td>全球淡水短缺Unit29</td>
+              <td>问题原因解决 / 混合类</td>
+              <td>Countries around the world have been experiencing various degrees of fresh water shortage. Give reasons for this problem and suggest what individuals and governments can do to solve it.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-25">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 26 题 社交网站负面影响Unit30 单边讨论 / 立场表态 Agree / Disagree Some people think that social networking sites have a huge negative impact on both individuals and society. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 26 题" data-title="社交网站负面影响Unit30" data-type="单边讨论 / 立场表态" data-prompt="Some people think that social networking sites have a huge negative impact on both individuals and society. To what extent do you agree or disagree?" data-anchor="#topic-26" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-26">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 26 题</strong><small>原讲解锚点：#topic-26</small></td>
+              <td>社交网站负面影响Unit30</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Some people think that social networking sites have a huge negative impact on both individuals and society. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-26">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 27 题 阅读 vs 看电视Unit31 单边讨论 / 立场表态 Agree / Disagree It is believed by many that those people who read for pleasure are better in imagination and language skills than those who prefer to watch TV. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 27 题" data-title="阅读 vs 看电视Unit31" data-type="单边讨论 / 立场表态" data-prompt="It is believed by many that those people who read for pleasure are better in imagination and language skills than those who prefer to watch TV. To what extent do you agree or disagree?" data-anchor="#topic-27" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-27">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 27 题</strong><small>原讲解锚点：#topic-27</small></td>
+              <td>阅读 vs 看电视Unit31</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>It is believed by many that those people who read for pleasure are better in imagination and language skills than those who prefer to watch TV. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-27">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 28 题 报纸 vs 其他媒体Unit32 双边讨论 Discuss both views Some people believe that newspaper is the best way to learn about news, while others believe that more effective way is through other media. Discuss both these views and give your own opinion." data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 28 题" data-title="报纸 vs 其他媒体Unit32" data-type="双边讨论" data-prompt="Some people believe that newspaper is the best way to learn about news, while others believe that more effective way is through other media. Discuss both these views and give your own opinion." data-anchor="#topic-28" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-28">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 28 题</strong><small>原讲解锚点：#topic-28</small></td>
+              <td>报纸 vs 其他媒体Unit32</td>
+              <td>双边讨论</td>
+              <td>Some people believe that newspaper is the best way to learn about news, while others believe that more effective way is through other media. Discuss both these views and give your own opinion.</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-28">打开讲解</a></td>
+            </tr>
+            
+            <tr data-search="大作文练习 &gt; 媒体广告类 &gt; 第 29 题 儿童广告禁令Unit33 单边讨论 / 立场表态 Agree / Disagree Nowadays, a large amount of advertising aiming at children should be banned because of the negative effects. To what extent do you agree or disagree?" data-kind="essay" data-position="大作文练习 &gt; 媒体广告类 &gt; 第 29 题" data-title="儿童广告禁令Unit33" data-type="单边讨论 / 立场表态" data-prompt="Nowadays, a large amount of advertising aiming at children should be banned because of the negative effects. To what extent do you agree or disagree?" data-anchor="#topic-29" data-href="../../../Context/html/Task2_大作文总整合入口.html#topic-29">
+              <td><strong>大作文练习 &gt; 媒体广告类 &gt; 第 29 题</strong><small>原讲解锚点：#topic-29</small></td>
+              <td>儿童广告禁令Unit33</td>
+              <td>单边讨论 / 立场表态</td>
+              <td>Nowadays, a large amount of advertising aiming at children should be banned because of the negative effects. To what extent do you agree or disagree?</td>
+              <td><a class="btn" href="../../../Context/html/Task2_大作文总整合入口.html#topic-29">打开讲解</a></td>
+            </tr>
+            </tbody>
+      </table>
+    </section>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const toggles = [...document.querySelectorAll('.toggle')];
+    const rows = [...document.querySelectorAll('tbody tr')];
+    const chartCount = document.getElementById('chart-count');
+    const essayCount = document.getElementById('essay-count');
+    const liveCount = document.getElementById('live-count');
+    const liveResults = document.getElementById('live-results');
+    let filter = 'all';
+
+    for (const cell of document.querySelectorAll('tbody tr')) {
+      const labels = ['学生版位置', '标题', '类型', '题目', '讲解页'];
+      [...cell.children].forEach((td, index) => td.setAttribute('data-label', labels[index] || ''));
+    }
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function normalizeText(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/第\s*0+(\d+)\s*题/g, '第$1题')
+        .replace(/[\s,，.。:：;；/\\|\-—_>]+/g, '')
+        .replace(/第0+(\d+)/g, '第$1');
+    }
+
+    function matches(row, rawQuery) {
+      const q = rawQuery.trim();
+      if (!q) return true;
+      const raw = (row.dataset.search || '').toLowerCase();
+      const position = (row.dataset.position || '').toLowerCase();
+
+      function matchQuestionNumber(n) {
+        const padded = String(n).padStart(2, '0');
+        return position.includes(`第 ${padded} 题`);
+      }
+
+      // Pure-digit query ("1", "01", "05") → interpret as "find question N".
+      // Constrained to 1-30 to avoid false positives against years (1970, 2002) and percentages in chart data.
+      const pureDigit = q.match(/^0*(\d+)$/);
+      if (pureDigit) {
+        const n = parseInt(pureDigit[1], 10);
+        if (n >= 1 && n <= 30) return matchQuestionNumber(n);
+      }
+
+      const rawNorm = normalizeText(raw);
+      const qNorm = normalizeText(q);
+      if (rawNorm.includes(qNorm)) return true;
+      const rawNoLeadingZero = rawNorm.replace(/第0+(\d+)题/g, '第$1题');
+      const qNoLeadingZero = qNorm.replace(/第0+(\d+)题/g, '第$1题');
+      if (rawNoLeadingZero.includes(qNoLeadingZero)) return true;
+
+      // Multi-token: digit tokens match question numbers only; non-digit tokens use fuzzy match.
+      const tokens = q.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+      if (!tokens.length) return false;
+      return tokens.every(token => {
+        if (/^\d+$/.test(token)) {
+          const n = parseInt(token, 10);
+          if (n >= 1 && n <= 30) return matchQuestionNumber(n);
+          return raw.includes(token);
+        }
+        if (token === '第' || token === '题') return true;
+        const tnorm = normalizeText(token);
+        if (tnorm.length < 2) return false;
+        return rawNorm.includes(tnorm) || raw.includes(token);
+      });
+    }
+
+    function renderLiveResults(visibleRows, rawQuery) {
+      const q = rawQuery.trim();
+      if (!q) {
+        liveCount.textContent = '输入关键词后显示匹配题目';
+        liveResults.className = 'result-grid';
+        liveResults.innerHTML = '<div class="empty-state">可以搜索题号、分类、标题、题干关键词或题型。例：`静态图 第 01`、`Gap year`、`water heating`、`social networking`。</div>';
+        return;
+      }
+      liveCount.textContent = `找到 ${visibleRows.length} 道匹配题目`;
+      if (!visibleRows.length) {
+        liveResults.className = '';
+        liveResults.innerHTML = '<div class="empty-state">没有匹配结果。可以换成英文关键词、题目里的核心名词，或直接搜分类和题号。</div>';
+        return;
+      }
+      liveResults.className = 'result-grid';
+      liveResults.innerHTML = visibleRows.slice(0, 12).map(row => {
+        const kindName = row.dataset.kind === 'chart' ? '图表作文' : '大作文';
+        const prompt = row.dataset.prompt || '';
+        const promptText = prompt.length > 220 ? prompt.slice(0, 220) + '...' : prompt;
+        return `
+          <article class="result-card">
+            <div class="result-meta">
+              <span class="pill">${escapeHtml(kindName)}</span>
+              <span class="pill">${escapeHtml(row.dataset.type)}</span>
+              <span class="pill">${escapeHtml(row.dataset.anchor)}</span>
+            </div>
+            <p class="result-title">${escapeHtml(row.dataset.position)}<br>${escapeHtml(row.dataset.title)}</p>
+            <p class="result-prompt">${escapeHtml(promptText)}</p>
+            <a class="btn" href="${escapeHtml(row.dataset.href)}">打开讲解</a>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function applyFilter() {
+      const q = search.value.trim();
+      let chartVisible = 0;
+      let essayVisible = 0;
+      const visibleRows = [];
+      for (const row of rows) {
+        const kind = row.dataset.kind;
+        const show = (filter === 'all' || filter === kind) && matches(row, q);
+        row.classList.toggle('hidden', !show);
+        if (show) {
+          visibleRows.push(row);
+          if (kind === 'chart') chartVisible++;
+          if (kind === 'essay') essayVisible++;
+        }
+      }
+      chartCount.textContent = `当前显示 ${chartVisible} 题`;
+      essayCount.textContent = `当前显示 ${essayVisible} 题`;
+      document.getElementById('chart-all').classList.toggle('hidden', filter === 'essay');
+      document.getElementById('essay-all').classList.toggle('hidden', filter === 'chart');
+      renderLiveResults(visibleRows, q);
+    }
+
+    toggles.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filter = btn.dataset.filter;
+        toggles.forEach(b => b.classList.toggle('active', b === btn));
+        applyFilter();
+      });
+    });
+    document.querySelectorAll('.links a').forEach(link => {
+      link.addEventListener('click', () => {
+        search.value = link.dataset.query || '';
+        filter = link.dataset.kind || 'all';
+        toggles.forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+        applyFilter();
+      });
+    });
+    document.querySelectorAll('.quick-tags button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        search.value = btn.dataset.query || '';
+        filter = 'all';
+        toggles.forEach(b => b.classList.toggle('active', b.dataset.filter === 'all'));
+        applyFilter();
+        document.getElementById('live-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    search.addEventListener('input', applyFilter);
+    applyFilter();
+  </script>
+</body>
+</html>

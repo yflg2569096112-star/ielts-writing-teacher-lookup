@@ -1,0 +1,24 @@
+{
+  "task1_count": 24,
+  "task2_count": 29,
+  "missing_task1_anchors": [],
+  "missing_task2_anchors": [],
+  "html": "outputs/manual-20260525/teacher-lookup/IELTS_Writing_教师讲解检索入口.html",
+  "task1_html": "outputs/manual-20260523/task1-all-lessons-full-html/index.html",
+  "task2_html": "Context/html/Task2_大作文总整合入口.html",
+  "task1_groups": {
+    "静态图": 7,
+    "动态图": 9,
+    "流程图": 6,
+    "地图题": 1,
+    "混合图": 1
+  },
+  "task2_groups": {
+    "教育家庭类": 9,
+    "社会城市类": 3,
+    "工作职业类": 3,
+    "科技文化类": 3,
+    "媒体广告类": 7,
+    "环境资源类": 4
+  }
+}
